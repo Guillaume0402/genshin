@@ -1,0 +1,8 @@
+FROM node:22
+WORKDIR /app
+COPY ./front/package*.json ./
+RUN npm install
+RUN npm rebuild
+COPY ./front ./
+EXPOSE 5173
+CMD [ "npm", "run", "dev" ]
