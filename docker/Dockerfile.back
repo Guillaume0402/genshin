@@ -1,4 +1,18 @@
-FROM php:8.2-apache
-COPY ../back /var/www/html
+FROM php:8.2-cli
+
+# Installer l'extension PDO MySQL
+RUN docker-php-ext-install pdo_mysql
+
+# Dossier de travail dans le conteneur
 WORKDIR /var/www/html
-EXPOSE 8000
+
+# Copier le code du back dans l'image
+COPY ../back /var/www/html
+
+# Le serveur PHP écoutera sur le port 80 dans le conteneur
+EXPOSE 80
+
+# Lancer le serveur PHP interne en pointant sur le dossier public
+# et en utilisant public/index.php comme routeur
+CMD ["php", "-S", "0.0.0.0:80", "-t", "public", "public/index.php"]
+

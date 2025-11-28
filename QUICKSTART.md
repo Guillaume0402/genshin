@@ -1,6 +1,6 @@
 # Démarrage Rapide - Genshin Build Manager
 
-Ce guide vous permet de démarrer l'application en 5 minutes.
+Ce guide permet de démarrer l'application en 5 minutes.
 
 ## Étapes de démarrage
 
@@ -54,7 +54,7 @@ Vous devriez voir 3 containers en état "running".
 docker exec -it genshin-db-1 mysql -uroot -prootpassword -e "USE genshin; SHOW TABLES;"
 ```
 
-Vous devriez voir 4 tables : users, characters, builds, favorites.
+Voir 4 tables : users, characters, builds, favorites.
 
 ### API fonctionnelle
 
@@ -162,4 +162,4 @@ En cas de problème :
 
 ---
 
-Bonne découverte ! 🚀
+
