@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détail Build - Genshin Build Manager</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <h2>Genshin Build Manager</h2>
+            </a>
+
+            <button class="nav-toggle" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <div class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link">Accueil</a>
+                <a href="builds.html" class="nav-link">Builds</a>
+                <a href="characters.html" class="nav-link">Personnages</a>
+                <div id="auth-links"></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu principal -->
+    <main class="container">
+        <div id="build-detail" class="loading">Chargement...</div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 Genshin Build Manager - Projet DWWM</p>
+            <p>Titre Professionnel Développeur Web et Web Mobile</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        // Toggle menu mobile
+        function toggleMenu() {
+            const menu = document.getElementById('nav-menu');
+            menu.classList.toggle('nav-menu-open');
+        }
+
+        // Récupère l'ID du build depuis l'URL
+        function getBuildId() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('id');
+        }
+
+        // Charge le détail du build
+        async function loadBuildDetail() {
+            const buildId = getBuildId();
+
+            if (!buildId) {
+                document.getElementById('build-detail').innerHTML =
+                    '<div class="error">ID du build manquant</div>';
+                return;
+            }
+
+            try {
+                const response = await buildsAPI.getById(buildId);
+                const build = response.data.build;
+                const container = document.getElementById('build-detail');
+
+                container.innerHTML = `
+                    <div class="card" style="max-width: 900px; margin: 0 auto;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 20px;">
+                            <div style="flex: 1;">
+                                <h1 style="color: #a5b4fc; margin-bottom: 10px;">${build.title}</h1>
+                                <p style="color: #9ca3af; margin-bottom: 5px;">
+                                    <strong>Personnage:</strong> ${build.character_name} • ${build.element}
+                                </p>
+                                <p style="color: #9ca3af;">
+                                    <strong>Créé par:</strong> ${build.author || 'Anonyme'}
+                                </p>
+                            </div>
+                            ${build.character_icon ? `
+                                <img src="${build.character_icon}" alt="${build.character_name}"
+                                     style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover;">
+                            ` : ''}
+                        </div>
+
+                        <div style="display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap;">
+                            <div style="padding: 10px 15px; background: rgba(99, 102, 241, 0.2); border-radius: 12px;">
+                                <span style="font-size: 1.2rem;">⭐ ${build.rating || 0}</span>
+                                <p style="font-size: 0.8rem; color: #9ca3af; margin-top: 5px;">Note</p>
+                            </div>
+                            <div style="padding: 10px 15px; background: rgba(99, 102, 241, 0.2); border-radius: 12px;">
+                                <span style="font-size: 1.2rem;">👁 ${build.views_count || 0}</span>
+                                <p style="font-size: 0.8rem; color: #9ca3af; margin-top: 5px;">Vues</p>
+                            </div>
+                            <div style="padding: 10px 15px; background: rgba(99, 102, 241, 0.2); border-radius: 12px;">
+                                <span style="font-size: 1.2rem;">❤ ${build.favorites_count || 0}</span>
+                                <p style="font-size: 0.8rem; color: #9ca3af; margin-top: 5px;">Favoris</p>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 30px;">
+                            <h2 style="color: #e5e7eb; margin-bottom: 15px;">Description</h2>
+                            <p style="color: #9ca3af; line-height: 1.6;">${build.description || 'Aucune description'}</p>
+                        </div>
+
+                        ${build.artifacts ? `
+                            <div style="margin-bottom: 30px;">
+                                <h2 style="color: #e5e7eb; margin-bottom: 15px;">Artefacts</h2>
+                                <div style="color: #9ca3af; background: rgba(15, 23, 42, 0.5); padding: 15px; border-radius: 12px;">
+                                    ${build.artifacts}
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        ${build.weapon ? `
+                            <div style="margin-bottom: 30px;">
+                                <h2 style="color: #e5e7eb; margin-bottom: 15px;">Arme</h2>
+                                <p style="color: #9ca3af;">${build.weapon}</p>
+                            </div>
+                        ` : ''}
+
+                        ${build.talents ? `
+                            <div style="margin-bottom: 30px;">
+                                <h2 style="color: #e5e7eb; margin-bottom: 15px;">Talents</h2>
+                                <p style="color: #9ca3af;">${build.talents}</p>
+                            </div>
+                        ` : ''}
+
+                        ${build.team_composition ? `
+                            <div style="margin-bottom: 30px;">
+                                <h2 style="color: #e5e7eb; margin-bottom: 15px;">Composition d'équipe</h2>
+                                <p style="color: #9ca3af;">${build.team_composition}</p>
+                            </div>
+                        ` : ''}
+
+                        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                            <a href="builds.html" class="btn btn-secondary">Retour</a>
+                            ${isAuthenticated() && getCurrentUser()?.id === build.user_id ? `
+                                <button onclick="deleteBuild(${build.id})" class="btn btn-danger">Supprimer</button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('build-detail').innerHTML =
+                    `<div class="error">Erreur: ${error.message}</div>`;
+            }
+        }
+
+        // Supprime le build
+        async function deleteBuild(buildId) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer ce build ?')) {
+                return;
+            }
+
+            try {
+                await buildsAPI.delete(buildId);
+                alert('Build supprimé avec succès');
+                window.location.href = 'builds.html';
+            } catch (error) {
+                alert('Erreur lors de la suppression: ' + error.message);
+            }
+        }
+
+        // Charge le build au chargement de la page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadBuildDetail();
+        });
+    </script>
+</body>
+</html>

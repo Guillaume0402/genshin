@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - Genshin Build Manager</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <h2>Genshin Build Manager</h2>
+            </a>
+
+            <button class="nav-toggle" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <div class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link">Accueil</a>
+                <a href="builds.html" class="nav-link">Builds</a>
+                <a href="characters.html" class="nav-link">Personnages</a>
+                <div id="auth-links"></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu principal -->
+    <main class="container">
+        <div class="auth-page">
+            <div class="auth-card card">
+                <h1>Connexion</h1>
+
+                <div id="error-message"></div>
+
+                <form id="login-form" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required
+                               placeholder="votre@email.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Mot de passe</label>
+                        <input type="password" id="password" name="password" required
+                               placeholder="••••••••">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block" id="submit-btn">
+                        Se connecter
+                    </button>
+                </form>
+
+                <p class="auth-footer">
+                    Pas encore de compte ? <a href="register.html">Inscrivez-vous</a>
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 Genshin Build Manager - Projet DWWM</p>
+            <p>Titre Professionnel Développeur Web et Web Mobile</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        // Redirige si déjà connecté
+        redirectIfAuthenticated();
+
+        // Toggle menu mobile
+        function toggleMenu() {
+            const menu = document.getElementById('nav-menu');
+            menu.classList.toggle('nav-menu-open');
+        }
+
+        // Gère la soumission du formulaire
+        async function handleLogin(event) {
+            event.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('error-message');
+            const submitBtn = document.getElementById('submit-btn');
+
+            errorDiv.innerHTML = '';
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Connexion...';
+
+            try {
+                const response = await authAPI.login(email, password);
+
+                // Sauvegarde le token et l'utilisateur
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('user', JSON.stringify(response.data.user));
+
+                // Redirige vers l'accueil
+                window.location.href = 'index.html';
+            } catch (error) {
+                errorDiv.innerHTML = `<div class="error">${error.message}</div>`;
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Se connecter';
+            }
+        }
+    </script>
+</body>
+</html>

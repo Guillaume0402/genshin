@@ -120,22 +120,22 @@ CREATE TABLE favorites (
 -- =====================================================
 
 -- Insertion de personnages populaires
-INSERT INTO characters (name, element, weapon_type, rarity, region, description) VALUES
-('Hu Tao', 'Pyro', 'Polearm', 5, 'Liyue', '77th Director of the Wangsheng Funeral Parlor'),
-('Ganyu', 'Cryo', 'Bow', 5, 'Liyue', 'Secretary at Yuehai Pavilion'),
-('Raiden Shogun', 'Electro', 'Polearm', 5, 'Inazuma', 'Electro Archon and supreme ruler of Inazuma'),
-('Kazuha', 'Anemo', 'Sword', 5, 'Inazuma', 'Wandering samurai of the once-famed Kaedehara Clan'),
-('Zhongli', 'Geo', 'Polearm', 5, 'Liyue', 'Consultant of the Wangsheng Funeral Parlor'),
-('Nahida', 'Dendro', 'Catalyst', 5, 'Sumeru', 'Dendro Archon and God of Wisdom'),
-('Neuvillette', 'Hydro', 'Catalyst', 5, 'Fontaine', 'Chief Justice of Fontaine'),
-('Bennett', 'Pyro', 'Sword', 4, 'Mondstadt', 'Member of the Adventurers Guild'),
-('Xingqiu', 'Hydro', 'Sword', 4, 'Liyue', 'Second son of the Feiyun Commerce Guild'),
-('Fischl', 'Electro', 'Bow', 4, 'Mondstadt', 'Investigator for the Adventurers Guild');
+INSERT INTO characters (name, element, weapon_type, rarity, region, icon_url, description) VALUES
+('Hu Tao', 'Pyro', 'Polearm', 5, 'Liyue', 'images/Hu_tao.png', '77th Director of the Wangsheng Funeral Parlor'),
+('Ganyu', 'Cryo', 'Bow', 5, 'Liyue', 'images/Ganyu.png', 'Secretary at Yuehai Pavilion'),
+('Raiden Shogun', 'Electro', 'Polearm', 5, 'Inazuma', 'images/Raiden_Shogun.png', 'Electro Archon and supreme ruler of Inazuma'),
+('Kazuha', 'Anemo', 'Sword', 5, 'Inazuma', 'images/Kazuha.png', 'Wandering samurai of the once-famed Kaedehara Clan'),
+('Zhongli', 'Geo', 'Polearm', 5, 'Liyue', 'images/Zhongli.png', 'Consultant of the Wangsheng Funeral Parlor'),
+('Nahida', 'Dendro', 'Catalyst', 5, 'Sumeru', 'images/Nahida.png', 'Dendro Archon and God of Wisdom'),
+('Neuvillette', 'Hydro', 'Catalyst', 5, 'Fontaine', 'images/Neuvillette.png', 'Chief Justice of Fontaine'),
+('Bennett', 'Pyro', 'Sword', 4, 'Mondstadt', 'images/Bennett.png', 'Member of the Adventurers Guild'),
+('Xingqiu', 'Hydro', 'Sword', 4, 'Liyue', 'images/Xingqiu.png', 'Second son of the Feiyun Commerce Guild'),
+('Fischl', 'Electro', 'Bow', 4, 'Mondstadt', 'images/Fischl.png', 'Investigator for the Adventurers Guild');
 
 -- Insertion d'un utilisateur de test (mot de passe: "password123")
 INSERT INTO users (username, email, password) VALUES
-('admin', 'admin@genshin.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
-('testuser', 'test@genshin.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
+('admin', 'admin@genshin.com', '$2y$10$.a7f7ws7P6xkI18AIUzIJOSxV0rgXM8GJMV0qRrAVkF7KP.NdiZQG'),
+('testuser', 'test@genshin.com', '$2y$10$.a7f7ws7P6xkI18AIUzIJOSxV0rgXM8GJMV0qRrAVkF7KP.NdiZQG');
 
 -- Insertion de builds de test
 INSERT INTO builds (user_id, character_id, title, description, artifact_set, weapon_name, weapon_refinement, talent_priority, is_public, tags) VALUES

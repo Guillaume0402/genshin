@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tous les Builds - Genshin Build Manager</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <h2>Genshin Build Manager</h2>
+            </a>
+
+            <button class="nav-toggle" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <div class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link">Accueil</a>
+                <a href="builds.html" class="nav-link active">Builds</a>
+                <a href="characters.html" class="nav-link">Personnages</a>
+                <div id="auth-links"></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu principal -->
+    <main class="container">
+        <!-- Header -->
+        <div class="page-header">
+            <h1>Tous les Builds</h1>
+            <a href="build-create.html" class="btn btn-primary" id="create-btn" style="display: none;">+ Créer un Build</a>
+        </div>
+
+        <!-- Filtres de recherche -->
+        <div class="filters">
+            <input type="text" id="search-input" class="search-input"
+                   placeholder="Rechercher un build..."
+                   oninput="handleSearch()">
+        </div>
+
+        <!-- Liste des builds -->
+        <div id="builds-list" class="loading">Chargement...</div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 Genshin Build Manager - Projet DWWM</p>
+            <p>Titre Professionnel Développeur Web et Web Mobile</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        // Toggle menu mobile
+        function toggleMenu() {
+            const menu = document.getElementById('nav-menu');
+            menu.classList.toggle('nav-menu-open');
+        }
+
+        // Affiche le bouton créer si connecté
+        if (isAuthenticated()) {
+            document.getElementById('create-btn').style.display = 'inline-flex';
+        }
+
+        // Charge les builds
+        async function loadBuilds(searchQuery = '') {
+            try {
+                const params = searchQuery ? `?search=${encodeURIComponent(searchQuery)}` : '';
+                const response = await buildsAPI.getAll(params);
+                const container = document.getElementById('builds-list');
+
+                if (response.data.builds.length === 0) {
+                    container.innerHTML = '<div class="empty">Aucun build trouvé</div>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                const grid = document.createElement('div');
+                grid.className = 'grid';
+
+                response.data.builds.forEach(build => {
+                    const card = createBuildCard(build);
+                    grid.appendChild(card);
+                });
+
+                container.appendChild(grid);
+            } catch (error) {
+                document.getElementById('builds-list').innerHTML =
+                    `<div class="error">Erreur: ${error.message}</div>`;
+            }
+        }
+
+        // Gère la recherche avec debounce
+        let searchTimeout;
+        function handleSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const query = document.getElementById('search-input').value;
+                if (query.length >= 2 || query.length === 0) {
+                    loadBuilds(query);
+                }
+            }, 300);
+        }
+
+        // Crée une carte de build
+        function createBuildCard(build) {
+            const card = document.createElement('div');
+            card.className = 'build-card card';
+            card.innerHTML = `
+                <div class="build-header">
+                    <img src="${build.character_icon || 'images/placeholder.png'}"
+                         alt="${build.character_name}"
+                         class="character-icon">
+                    <div class="build-info">
+                        <h3>${build.title}</h3>
+                        <p class="character-name">${build.character_name} • ${build.element}</p>
+                    </div>
+                </div>
+                <p class="build-description">${truncate(build.description, 100)}</p>
+                <div class="build-meta">
+                    <span>⭐ ${build.rating || 0}</span>
+                    <span>👁 ${build.views_count || 0}</span>
+                    <span>❤ ${build.favorites_count || 0}</span>
+                </div>
+                <div class="build-footer">
+                    <span class="author">Par: ${build.author || 'Anonyme'}</span>
+                    <a href="build-detail.html?id=${build.id}" class="btn btn-primary btn-sm">Voir</a>
+                </div>
+            `;
+            return card;
+        }
+
+        // Tronque un texte
+        function truncate(text, length) {
+            if (!text) return '';
+            return text.length > length ? text.substring(0, length) + '...' : text;
+        }
+
+        // Charge les builds au chargement de la page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadBuilds();
+        });
+    </script>
+</body>
+</html>

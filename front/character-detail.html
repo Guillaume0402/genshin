@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détail Personnage - Genshin Build Manager</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <h2>Genshin Build Manager</h2>
+            </a>
+
+            <button class="nav-toggle" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <div class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link">Accueil</a>
+                <a href="builds.html" class="nav-link">Builds</a>
+                <a href="characters.html" class="nav-link">Personnages</a>
+                <div id="auth-links"></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu principal -->
+    <main class="container">
+        <div id="character-detail" class="loading">Chargement...</div>
+
+        <div style="margin-top: 40px;">
+            <h2 style="color: #a5b4fc; margin-bottom: 20px;">Builds pour ce personnage</h2>
+            <div id="character-builds" class="grid">
+                <div class="loading">Chargement des builds...</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 Genshin Build Manager - Projet DWWM</p>
+            <p>Titre Professionnel Développeur Web et Web Mobile</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        // Toggle menu mobile
+        function toggleMenu() {
+            const menu = document.getElementById('nav-menu');
+            menu.classList.toggle('nav-menu-open');
+        }
+
+        // Récupère l'ID du personnage depuis l'URL
+        function getCharacterId() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('id');
+        }
+
+        // Charge le détail du personnage
+        async function loadCharacterDetail() {
+            const characterId = getCharacterId();
+
+            if (!characterId) {
+                document.getElementById('character-detail').innerHTML =
+                    '<div class="error">ID du personnage manquant</div>';
+                return;
+            }
+
+            try {
+                const response = await charactersAPI.getById(characterId);
+                const character = response.data.character;
+                const container = document.getElementById('character-detail');
+
+                container.innerHTML = `
+                    <div class="card" style="max-width: 900px; margin: 0 auto;">
+                        <div style="display: flex; gap: 30px; align-items: start; flex-wrap: wrap;">
+                            ${character.icon_url ? `
+                                <img src="${character.icon_url}" alt="${character.name}"
+                                     style="width: 200px; height: 200px; border-radius: 20px; object-fit: cover; flex-shrink: 0;">
+                            ` : ''}
+
+                            <div style="flex: 1; min-width: 300px;">
+                                <h1 style="color: #a5b4fc; margin-bottom: 15px;">${character.name}</h1>
+
+                                <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                                    <span class="badge element-${character.element.toLowerCase()}">${character.element}</span>
+                                    <span class="badge weapon">${character.weapon_type}</span>
+                                    <span class="badge rarity">${'⭐'.repeat(character.rarity)}</span>
+                                </div>
+
+                                ${character.region ? `
+                                    <p style="color: #9ca3af; margin-bottom: 10px;">
+                                        <strong>Région:</strong> ${character.region}
+                                    </p>
+                                ` : ''}
+
+                                ${character.description ? `
+                                    <p style="color: #9ca3af; line-height: 1.6; margin-top: 20px;">
+                                        ${character.description}
+                                    </p>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 10px; margin-top: 30px; justify-content: flex-end;">
+                            <a href="characters.html" class="btn btn-secondary">Retour aux personnages</a>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('character-detail').innerHTML =
+                    `<div class="error">Erreur: ${error.message}</div>`;
+            }
+        }
+
+        // Charge les builds du personnage
+        async function loadCharacterBuilds() {
+            const characterId = getCharacterId();
+
+            if (!characterId) {
+                return;
+            }
+
+            try {
+                const response = await charactersAPI.getBuilds(characterId);
+                const builds = response.data.builds;
+                const container = document.getElementById('character-builds');
+
+                if (builds.length === 0) {
+                    container.innerHTML = '<p style="color: #9ca3af; text-align: center;">Aucun build disponible pour ce personnage</p>';
+                    return;
+                }
+
+                container.innerHTML = '';
+
+                builds.forEach(build => {
+                    const card = document.createElement('div');
+                    card.className = 'card build-card';
+                    card.style.cursor = 'pointer';
+                    card.onclick = () => window.location.href = `build-detail.html?id=${build.id}`;
+
+                    card.innerHTML = `
+                        <div class="build-header">
+                            <img src="${build.character_icon || 'images/placeholder.png'}"
+                                 alt="${build.character_name}"
+                                 class="character-icon">
+                            <div>
+                                <h3>${build.title}</h3>
+                                <p class="build-author">Par ${build.author || 'Anonyme'}</p>
+                            </div>
+                        </div>
+
+                        <p class="build-description">${build.description || 'Aucune description'}</p>
+
+                        ${build.artifact_set ? `
+                            <div class="build-info">
+                                <span class="badge">🎭 ${build.artifact_set}</span>
+                            </div>
+                        ` : ''}
+
+                        ${build.weapon_name ? `
+                            <div class="build-info">
+                                <span class="badge">⚔️ ${build.weapon_name}</span>
+                            </div>
+                        ` : ''}
+
+                        <div class="build-stats">
+                            <span>⭐ ${build.rating || 0}</span>
+                            <span>👁 ${build.views_count || 0} vues</span>
+                            <span>❤ ${build.favorites_count || 0} favoris</span>
+                        </div>
+                    `;
+
+                    container.appendChild(card);
+                });
+            } catch (error) {
+                document.getElementById('character-builds').innerHTML =
+                    `<div class="error">Erreur: ${error.message}</div>`;
+            }
+        }
+
+        // Charge les données au chargement de la page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCharacterDetail();
+            loadCharacterBuilds();
+        });
+    </script>
+</body>
+</html>

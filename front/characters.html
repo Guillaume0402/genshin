@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personnages - Genshin Build Manager</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <h2>Genshin Build Manager</h2>
+            </a>
+
+            <button class="nav-toggle" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <div class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link">Accueil</a>
+                <a href="builds.html" class="nav-link">Builds</a>
+                <a href="characters.html" class="nav-link active">Personnages</a>
+                <div id="auth-links"></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu principal -->
+    <main class="container">
+        <!-- Header -->
+        <div class="page-header">
+            <h1>Personnages</h1>
+        </div>
+
+        <!-- Filtres -->
+        <div class="filters">
+            <select id="element-filter" class="filter-select" onchange="handleFilter()">
+                <option value="">Tous les éléments</option>
+                <option value="Pyro">Pyro</option>
+                <option value="Hydro">Hydro</option>
+                <option value="Anemo">Anemo</option>
+                <option value="Electro">Electro</option>
+                <option value="Dendro">Dendro</option>
+                <option value="Cryo">Cryo</option>
+                <option value="Geo">Geo</option>
+            </select>
+
+            <select id="rarity-filter" class="filter-select" onchange="handleFilter()">
+                <option value="">Toutes les raretés</option>
+                <option value="4">4 étoiles</option>
+                <option value="5">5 étoiles</option>
+            </select>
+        </div>
+
+        <!-- Liste des personnages -->
+        <div id="characters-list" class="loading">Chargement...</div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 Genshin Build Manager - Projet DWWM</p>
+            <p>Titre Professionnel Développeur Web et Web Mobile</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        // Toggle menu mobile
+        function toggleMenu() {
+            const menu = document.getElementById('nav-menu');
+            menu.classList.toggle('nav-menu-open');
+        }
+
+        // Charge les personnages
+        async function loadCharacters(filters = {}) {
+            try {
+                const params = new URLSearchParams(filters).toString();
+                const queryString = params ? `?${params}` : '';
+                const response = await charactersAPI.getAll(queryString);
+                const container = document.getElementById('characters-list');
+
+                if (response.data.characters.length === 0) {
+                    container.innerHTML = '<div class="empty">Aucun personnage trouvé</div>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                const grid = document.createElement('div');
+                grid.className = 'grid';
+
+                response.data.characters.forEach(character => {
+                    const card = createCharacterCard(character);
+                    grid.appendChild(card);
+                });
+
+                container.appendChild(grid);
+            } catch (error) {
+                document.getElementById('characters-list').innerHTML =
+                    `<div class="error">Erreur: ${error.message}</div>`;
+            }
+        }
+
+        // Gère les filtres
+        function handleFilter() {
+            const element = document.getElementById('element-filter').value;
+            const rarity = document.getElementById('rarity-filter').value;
+
+            const filters = {};
+            if (element) filters.element = element;
+            if (rarity) filters.rarity = rarity;
+
+            loadCharacters(filters);
+        }
+
+        // Crée une carte de personnage
+        function createCharacterCard(character) {
+            const card = document.createElement('div');
+            card.className = 'character-card card';
+            card.innerHTML = `
+                <img src="${character.icon_url || 'images/placeholder.png'}"
+                     alt="${character.name}"
+                     class="character-image">
+                <div class="character-content">
+                    <h3>${character.name}</h3>
+                    <div class="character-details">
+                        <span class="badge element-${character.element.toLowerCase()}">${character.element}</span>
+                        <span class="badge weapon">${character.weapon_type}</span>
+                        <span class="badge rarity">${'⭐'.repeat(character.rarity)}</span>
+                    </div>
+                    <p class="character-region">${character.region}</p>
+                    ${character.builds_count ? `<div class="character-stats"><span>📖 ${character.builds_count} builds</span></div>` : ''}
+                    <div class="character-footer">
+                        <a href="character-detail.html?id=${character.id}" class="btn btn-primary btn-block">Voir les builds</a>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        // Charge les personnages au chargement de la page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCharacters();
+        });
+    </script>
+</body>
+</html>

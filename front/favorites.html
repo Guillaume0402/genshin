@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Genshin Build Manager - Mes favoris</title>
+        <link rel="stylesheet" href="css/style.css" />
+    </head>
+    <body>
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="index.html" class="nav-logo">
+                    <h2>Genshin Build Manager</h2>
+                </a>
+
+                <button class="nav-toggle" onclick="toggleMenu()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+
+                <div class="nav-menu" id="nav-menu">
+                    <a href="index.html" class="nav-link">Accueil</a>
+                    <a href="builds.html" class="nav-link">Builds</a>
+                    <a href="characters.html" class="nav-link">Personnages</a>
+                    <div id="auth-links"></div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Contenu principal -->
+        <main class="container">
+            <section class="page-header">
+                <div>
+                    <p class="page-kicker">Builds</p>
+                    <h1>Mes favoris</h1>
+                    <p class="page-subtitle">
+                        Retrouvez ici tous les builds que vous avez ajoutés en
+                        favori.
+                    </p>
+                </div>
+            </section>
+
+            <section id="favorites-section">
+                <div id="favorites-loading" class="loading">
+                    Chargement de vos favoris...
+                </div>
+                <div
+                    id="favorites-error"
+                    class="error"
+                    style="display: none"
+                ></div>
+                <div id="favorites-empty" class="empty" style="display: none">
+                    Vous n'avez encore aucun build en favori.
+                </div>
+                <div
+                    id="favorites-list"
+                    class="grid"
+                    style="display: none"
+                ></div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p>&copy; 2024 Genshin Build Manager - Projet DWWM</p>
+                <p>Titre Professionnel Développeur Web et Web Mobile</p>
+            </div>
+        </footer>
+
+        <!-- Scripts -->
+        <script src="js/auth.js"></script>
+        <script src="js/api.js"></script>
+        <script src="js/favorites.js"></script>
+        <script>
+            function toggleMenu() {
+                const menu = document.getElementById("nav-menu");
+                menu.classList.toggle("nav-menu-open");
+            }
+        </script>
+    </body>
+</html>

@@ -1,13 +1,195 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>front</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genshin Build Manager - Accueil</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <h2>Genshin Build Manager</h2>
+            </a>
+
+            <button class="nav-toggle" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <div class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link active">Accueil</a>
+                <a href="builds.html" class="nav-link">Builds</a>
+                <a href="characters.html" class="nav-link">Personnages</a>
+                <div id="auth-links"></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu principal -->
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>Genshin Build Manager</h1>
+            <p>Créez, partagez et découvrez les meilleurs builds pour vos personnages préférés</p>
+            <div class="hero-actions">
+                <a href="builds.html" class="btn btn-primary btn-lg">Explorer les Builds</a>
+                <a href="characters.html" class="btn btn-secondary btn-lg">Voir les Personnages</a>
+            </div>
+        </section>
+
+        <!-- Builds les mieux notés -->
+        <section>
+            <h2 style="margin-bottom: 20px; color: #e5e7eb;">Builds les mieux notés</h2>
+            <div id="top-builds" class="loading">Chargement...</div>
+        </section>
+
+        <!-- Personnages populaires -->
+        <section style="margin-top: 40px;">
+            <h2 style="margin-bottom: 20px; color: #e5e7eb;">Personnages populaires</h2>
+            <div id="popular-characters" class="loading">Chargement...</div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 Genshin Build Manager - Projet DWWM</p>
+            <p>Titre Professionnel Développeur Web et Web Mobile</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        // Toggle menu mobile
+        function toggleMenu() {
+            const menu = document.getElementById('nav-menu');
+            menu.classList.toggle('nav-menu-open');
+        }
+
+        // Charge les builds les mieux notés
+        async function loadTopBuilds() {
+            try {
+                const response = await buildsAPI.getAll('?limit=6');
+                const container = document.getElementById('top-builds');
+
+                if (response.data.builds.length === 0) {
+                    container.innerHTML = '<div class="empty">Aucun build disponible</div>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                const grid = document.createElement('div');
+                grid.className = 'grid';
+
+                response.data.builds.forEach(build => {
+                    const card = createBuildCard(build);
+                    grid.appendChild(card);
+                });
+
+                container.appendChild(grid);
+            } catch (error) {
+                document.getElementById('top-builds').innerHTML =
+                    `<div class="error">Erreur: ${error.message}</div>`;
+            }
+        }
+
+        // Charge les personnages populaires
+        async function loadPopularCharacters() {
+            try {
+                const response = await charactersAPI.getAll('?limit=6');
+                const container = document.getElementById('popular-characters');
+
+                if (response.data.characters.length === 0) {
+                    container.innerHTML = '<div class="empty">Aucun personnage disponible</div>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                const grid = document.createElement('div');
+                grid.className = 'grid';
+
+                response.data.characters.forEach(character => {
+                    const card = createCharacterCard(character);
+                    grid.appendChild(card);
+                });
+
+                container.appendChild(grid);
+            } catch (error) {
+                document.getElementById('popular-characters').innerHTML =
+                    `<div class="error">Erreur: ${error.message}</div>`;
+            }
+        }
+
+        // Crée une carte de build
+        function createBuildCard(build) {
+            const card = document.createElement('div');
+            card.className = 'build-card card';
+            card.innerHTML = `
+                <div class="build-header">
+                    <img src="${build.character_icon || 'images/placeholder.png'}"
+                         alt="${build.character_name}"
+                         class="character-icon">
+                    <div class="build-info">
+                        <h3>${build.title}</h3>
+                        <p class="character-name">${build.character_name} • ${build.element}</p>
+                    </div>
+                </div>
+                <p class="build-description">${truncate(build.description, 100)}</p>
+                <div class="build-meta">
+                    <span>⭐ ${build.rating || 0}</span>
+                    <span>👁 ${build.views_count || 0}</span>
+                    <span>❤ ${build.favorites_count || 0}</span>
+                </div>
+                <div class="build-footer">
+                    <span class="author">Par: ${build.author || 'Anonyme'}</span>
+                    <a href="build-detail.html?id=${build.id}" class="btn btn-primary btn-sm">Voir</a>
+                </div>
+            `;
+            return card;
+        }
+
+        // Crée une carte de personnage
+        function createCharacterCard(character) {
+            const card = document.createElement('div');
+            card.className = 'character-card card';
+            card.innerHTML = `
+                <img src="${character.icon_url || 'images/placeholder.png'}"
+                     alt="${character.name}"
+                     class="character-image">
+                <div class="character-content">
+                    <h3>${character.name}</h3>
+                    <div class="character-details">
+                        <span class="badge element-${character.element.toLowerCase()}">${character.element}</span>
+                        <span class="badge weapon">${character.weapon_type}</span>
+                        <span class="badge rarity">${'⭐'.repeat(character.rarity)}</span>
+                    </div>
+                    <p class="character-region">${character.region}</p>
+                    ${character.builds_count ? `<div class="character-stats"><span>📖 ${character.builds_count} builds</span></div>` : ''}
+                    <div class="character-footer">
+                        <a href="character-detail.html?id=${character.id}" class="btn btn-primary btn-block">Voir les builds</a>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        // Tronque un texte
+        function truncate(text, length) {
+            if (!text) return '';
+            return text.length > length ? text.substring(0, length) + '...' : text;
+        }
+
+        // Charge les données au chargement de la page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTopBuilds();
+            loadPopularCharacters();
+        });
+    </script>
+</body>
 </html>

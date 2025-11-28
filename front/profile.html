@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Genshin Build Manager - Profil</title>
+        <link rel="stylesheet" href="css/style.css" />
+    </head>
+    <body>
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="index.html" class="nav-logo">
+                    <h2>Genshin Build Manager</h2>
+                </a>
+
+                <button class="nav-toggle" onclick="toggleMenu()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+
+                <div class="nav-menu" id="nav-menu">
+                    <a href="index.html" class="nav-link">Accueil</a>
+                    <a href="builds.html" class="nav-link">Builds</a>
+                    <a href="characters.html" class="nav-link">Personnages</a>
+                    <div id="auth-links"></div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Contenu principal -->
+        <main class="container">
+            <section class="page-header">
+                <div>
+                    <p class="page-kicker">Compte</p>
+                    <h1>Mon profil</h1>
+                    <p class="page-subtitle">
+                        Gérez les informations de votre compte Genshin Build
+                        Manager.
+                    </p>
+                </div>
+            </section>
+
+            <section class="card" id="profile-card">
+                <div id="profile-loading" class="loading">
+                    Chargement du profil...
+                </div>
+                <div
+                    id="profile-error"
+                    class="error"
+                    style="display: none"
+                ></div>
+
+                <div id="profile-content" style="display: none">
+                    <div class="form-group">
+                        <label>Nom d'utilisateur</label>
+                        <input type="text" id="profile-username" disabled />
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="profile-email" disabled />
+                    </div>
+                    <div class="form-group">
+                        <label>Date de création</label>
+                        <input type="text" id="profile-created-at" disabled />
+                    </div>
+
+                    <div
+                        class="profile-actions"
+                        style="
+                            margin-top: 24px;
+                            display: flex;
+                            justify-content: space-between;
+                            gap: 16px;
+                            flex-wrap: wrap;
+                        "
+                    >
+                        <button
+                            class="btn btn-secondary"
+                            type="button"
+                            onclick="window.location.href='favorites.html'"
+                        >
+                            Voir mes favoris
+                        </button>
+                        <button
+                            class="btn btn-danger"
+                            type="button"
+                            onclick="logout()"
+                        >
+                            Se déconnecter
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p>&copy; 2024 Genshin Build Manager - Projet DWWM</p>
+                <p>Titre Professionnel Développeur Web et Web Mobile</p>
+            </div>
+        </footer>
+
+        <!-- Scripts -->
+        <script src="js/auth.js"></script>
+        <script src="js/api.js"></script>
+        <script src="js/profile.js"></script>
+        <script>
+            function toggleMenu() {
+                const menu = document.getElementById("nav-menu");
+                menu.classList.toggle("nav-menu-open");
+            }
+        </script>
+    </body>
+</html>
