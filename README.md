@@ -247,4 +247,4 @@ Projet éducatif - 2024
 
 ---
 
-**Note :** Ce projet utilise du HTML/CSS/JavaScript vanilla pour le frontend, ce qui le rend simple, accessible et facile à comprendre pour un dossier professionnel DWWM.
+

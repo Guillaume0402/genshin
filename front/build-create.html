@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créer un build - Genshin Build Manager</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <h2>Genshin Build Manager</h2>
+            </a>
+
+            <button class="nav-toggle" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <div class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link">Accueil</a>
+                <a href="builds.html" class="nav-link active">Builds</a>
+                <a href="characters.html" class="nav-link">Personnages</a>
+                <div id="auth-links"></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu principal -->
+    <main class="container">
+        <section class="page-header">
+            <div>
+                <p class="page-kicker">Builds</p>
+                <h1>Créer un nouveau build</h1>
+                <p class="page-subtitle">Proposez votre propre build pour un personnage et partagez-le avec la communauté.</p>
+            </div>
+        </section>
+
+        <section class="card">
+            <div id="build-create-error" class="error" style="display:none;"></div>
+            <div id="build-create-success" class="success" style="display:none;"></div>
+
+            <form id="build-create-form" class="form" novalidate>
+                <div class="form-group">
+                    <label for="character_id">Personnage</label>
+                    <select id="character_id" required></select>
+                </div>
+
+                <div class="form-group">
+                    <label for="title">Titre du build</label>
+                    <input type="text" id="title" placeholder="Hu Tao Vaporize DPS" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" rows="4" placeholder="Expliquez le principe du build, les rotations, les synergies..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="artifact_set">Set d'artefacts</label>
+                    <input type="text" id="artifact_set" placeholder="Crimson Witch of Flames">
+                </div>
+
+                <div class="form-group">
+                    <label for="weapon_name">Arme principale</label>
+                    <input type="text" id="weapon_name" placeholder="Staff of Homa">
+                </div>
+
+                <div class="form-group">
+                    <label for="talent_priority">Priorité des talents</label>
+                    <input type="text" id="talent_priority" placeholder="E > Q > A">
+                </div>
+
+                <div class="form-group">
+                    <label for="is_public">Visibilité</label>
+                    <select id="is_public">
+                        <option value="1" selected>Public</option>
+                        <option value="0">Privé</option>
+                    </select>
+                </div>
+
+                <div class="form-actions" style="margin-top:24px; display:flex; gap:16px; flex-wrap:wrap; justify-content:flex-end;">
+                    <a href="builds.html" class="btn btn-secondary">Annuler</a>
+                    <button type="submit" class="btn btn-primary">Créer le build</button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 Genshin Build Manager - Projet DWWM</p>
+            <p>Titre Professionnel Développeur Web et Web Mobile</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/build-create.js"></script>
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('nav-menu');
+            menu.classList.toggle('nav-menu-open');
+        }
+    </script>
+</body>
+</html>
